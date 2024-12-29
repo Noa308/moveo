@@ -1,28 +1,56 @@
 // https://socket.io/docs/v4/tutorial/introduction
 import express from "express";
 import { createServer } from "node:http";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
 import { Server } from "socket.io";
+
+import { client, connect } from "./db.js";
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server); // new websocket server
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+  },
+}); // new websocket server
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+let state = {
+  codeBlocks: [],
+  userCount: 0,
+  activeCodeBlockId: -1,
+  solution: "",
+  editedCode: "",
+};
 
-app.get("/", (req, res) => {
-  res.sendFile(join(__dirname, "index.html"));
-});
+server.listen(3000, async () => {
+  //init
+  await connect();
+  const { rows } = await client.query(`select * from code_blocks`);
+  state["codeBlocks"] = rows;
 
-io.on("connection", (socket) => {
-  socket.on("chat message", (msg) => {
-    io.emit("chat", msg);
+  //allow connections
+  io.on("connection", (socket) => {
+    console.log("new connection");
+    let toSend = {
+      codeBlocks: state["codeBlocks"],
+      activeCodeBlockId: state["activeCodeBlockId"],
+    };
+    socket.emit("codeBlockInfo", toSend);
+    // socket.on("chat message", (msg) => {
+    //   io.emit("chat", msg);
     //"on" is when this event happend
     //"emit" send the event to everyone
+    // });
   });
 });
 
-server.listen(3000, () => {
-  console.log("server running at http://localhost:3000");
-});
+async function cleanup() {
+  await client.end();
+  setTimeout(function () {
+    console.error("Could not close connections in time, forcing shut down");
+    process.exit(1);
+  }, 30 * 1000);
+  process.exit();
+}
+
+process.on("SIGINT", cleanup);
+process.on("SIGTERM", cleanup);
