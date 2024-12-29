@@ -6,6 +6,8 @@ import { io } from "socket.io-client";
 
 function App() {
   const [codeBlocks, setCodeBlocks] = useState([]);
+  const [activeCodeBlockId, setActiveCodeBlockId] = useState(-1);
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
     const socket = io("ws://localhost:3000", {
@@ -13,8 +15,16 @@ function App() {
     });
     socket.on("codeBlockInfo", (recivedMesage) => {
       console.log(recivedMesage);
-      setCodeBlocks(recivedMesage["codeBlocks"]);
+      const { activeCodeBlockId, codeBlocks } = recivedMesage;
+      setCodeBlocks(codeBlocks);
+      setActiveCodeBlockId(activeCodeBlockId);
     });
+
+    socket.on("codeBlockActivated", (activeCodeBlockId) =>
+      setActiveCodeBlockId(activeCodeBlockId)
+    );
+
+    setSocket(socket);
     //cleanup:
     return () => {
       socket.disconnect();
@@ -24,8 +34,19 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LobbyPage codeBlocks={codeBlocks} />} />
-        <Route path="/CodeBlock/:id" element={<CodeBlockId />} />
+        <Route
+          path="/"
+          element={
+            <LobbyPage
+              codeBlocks={codeBlocks}
+              activeCodeBlockId={activeCodeBlockId}
+            />
+          }
+        />
+        <Route
+          path="/CodeBlock/:id"
+          element={<CodeBlockId codeBlocks={codeBlocks} socket={socket} />}
+        />
       </Routes>
     </BrowserRouter>
   );

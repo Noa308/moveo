@@ -1,11 +1,12 @@
 import { useParams } from "react-router";
 import CodeBlock from "./CodeBlock";
 
-const CodeBlockId = () => {
+const CodeBlockId = ({ codeBlocks, socket }) => {
   const { id } = useParams();
+  const codeBlock = codeBlocks.find((el) => el.id == id);
   return (
     <div>
-      <CodeBlock id={id} />
+      <CodeBlock codeBlock={codeBlock} socket={socket} />
     </div>
   );
 };

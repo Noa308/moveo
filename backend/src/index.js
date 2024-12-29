@@ -35,11 +35,20 @@ server.listen(3000, async () => {
       activeCodeBlockId: state["activeCodeBlockId"],
     };
     socket.emit("codeBlockInfo", toSend);
-    // socket.on("chat message", (msg) => {
-    //   io.emit("chat", msg);
+
+    socket.on("enterCodeBlock", (codeBlockId) => {
+      console.log(`enter code block: ${codeBlockId}`);
+
+      //check if Tom enter the room/ other student
+      if (state["activeCodeBlockId"] !== -1) {
+        state["userCount"]++;
+      } else {
+        state["activeCodeBlockId"] = codeBlockId;
+        io.emit("codeBlockActivated", codeBlockId);
+      }
+    });
     //"on" is when this event happend
-    //"emit" send the event to everyone
-    // });
+    //"emit" send the event (io.emit = send to all connected sockets, socket.emit = send to this socket)
   });
 });
 
