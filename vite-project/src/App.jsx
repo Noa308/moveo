@@ -1,13 +1,13 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import LobbyPage from "./LobbyPage";
-import CodeBlock from "./CodeBlock";
+import CodeBlockId from "./CodeBlockId";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes className="bg-blue-50 min-h-screen text-blue-950 flex flex-col items-center w-full">
+      <Routes>
         <Route path="/" element={<LobbyPage />} />
-        <Route path="/Groups/:id" element={<CodeBlock />} />
+        <Route path="/CodeBlock/:id" element={<CodeBlockId />} />
       </Routes>
     </BrowserRouter>
   );
