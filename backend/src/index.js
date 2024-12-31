@@ -17,8 +17,9 @@ let state = {
   codeBlocks: [],
   userCount: 0,
   activeCodeBlockId: -1,
-  solution: "",
-  editedCode: "",
+  solution: "code solution",
+  editedCode: "code template",
+  activeUsers: new Map(),
 };
 
 server.listen(3000, async () => {
@@ -29,7 +30,10 @@ server.listen(3000, async () => {
 
   //allow connections
   io.on("connection", (socket) => {
+    //"connection" is saved word
     console.log("new connection");
+    const userId = socket.id;
+
     let toSend = {
       codeBlocks: state["codeBlocks"],
       activeCodeBlockId: state["activeCodeBlockId"],
@@ -37,18 +41,52 @@ server.listen(3000, async () => {
     socket.emit("codeBlockInfo", toSend);
 
     socket.on("enterCodeBlock", (codeBlockId) => {
-      console.log(`enter code block: ${codeBlockId}`);
+      console.log(`enter code block: ${codeBlockId} the user: ${userId}`);
 
       //check if Tom enter the room/ other student
       if (state["activeCodeBlockId"] !== -1) {
-        state["userCount"]++;
+        if (!state["activeUsers"].has(userId)) {
+          state["userCount"]++;
+          console.log(`student enter the block id , student:${userId}`);
+          io.emit("number of users", state["userCount"]);
+          state["activeUsers"].set(userId, userId);
+        }
       } else {
         state["activeCodeBlockId"] = codeBlockId;
         io.emit("codeBlockActivated", codeBlockId);
+        if (!state["activeUsers"].has(userId)) {
+          state["activeUsers"].set(userId, userId);
+        }
+        socket.emit("this is the mentor");
+        console.log(`mentor enter the code block, id: ${userId}`);
       }
+    });
+
+    socket.on("changeCode", (codeToShow) => {
+      state["editedCode"] = codeToShow;
+      io.emit("editedCode", codeToShow);
     });
     //"on" is when this event happend
     //"emit" send the event (io.emit = send to all connected sockets, socket.emit = send to this socket)
+
+    socket.on("user left the code block", () => {
+      console.log(`user disconnected, user: ${userId}`);
+      state["activeUsers"].delete(userId);
+      state["userCount"]--;
+      io.emit("number of users", state["userCount"]);
+    });
+
+    socket.on("mentor left the code block", () => {
+      console.log(`mentor disconnected, mentor: ${userId}`);
+      state = {
+        userCount: 0,
+        activeCodeBlockId: -1,
+        solution: "code solution",
+        editedCode: "code template",
+        activeUsers: new Map(),
+      };
+      io.emit("restart code block id");
+    });
   });
 });
 

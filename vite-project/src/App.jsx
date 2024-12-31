@@ -3,11 +3,13 @@ import LobbyPage from "./LobbyPage";
 import CodeBlockId from "./CodeBlockId";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+// import useGoToPath from "./useGoToPath";
 
 function App() {
   const [codeBlocks, setCodeBlocks] = useState([]);
   const [activeCodeBlockId, setActiveCodeBlockId] = useState(-1);
   const [socket, setSocket] = useState(null);
+  // const goToPath = useGoToPath();
 
   useEffect(() => {
     const socket = io("ws://localhost:3000", {
@@ -23,6 +25,12 @@ function App() {
     socket.on("codeBlockActivated", (activeCodeBlockId) =>
       setActiveCodeBlockId(activeCodeBlockId)
     );
+
+    socket.on("restart code block id", () => {
+      console.log("restart");
+      setActiveCodeBlockId(-1);
+      // goToPath(`/`);
+    });
 
     setSocket(socket);
     //cleanup:
