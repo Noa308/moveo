@@ -24,12 +24,20 @@ const CodeBlock = ({ codeBlock, socket }) => {
       setCodeToShow(editedCode);
       //without this only my UI will see the changes and with this all the users will see
     });
+    const reset = () => {
+      console.log("restart- second listener");
+      goToPath(`/`);
+    };
+    socket.on("restart code block id", reset);
     //cleanup:
     return () => {
       socket.off("number of users");
       socket.off("editedCode");
+      socket.off("restart code block id", reset);
+      //when i have more then one listener i need to add the listener to the socket.off.
+      // in "socket.off("restart code block id", reset)" the first listener is here(the reset) and the second in "App.jsx"
     };
-  }, [socket]);
+  }, [socket, goToPath]);
 
   useEffect(() => {
     socket.on("this is the mentor", () => {
