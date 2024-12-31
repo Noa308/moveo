@@ -32,6 +32,7 @@ const CodeBlock = ({ codeBlock, socket }) => {
     //cleanup:
     return () => {
       socket.off("number of users");
+      //socket.off = stop listen to this. it's not socket.disconnect which close this socket
       socket.off("editedCode");
       socket.off("restart code block id", reset);
       //when i have more then one listener i need to add the listener to the socket.off.
@@ -50,10 +51,15 @@ const CodeBlock = ({ codeBlock, socket }) => {
   }, [socket, isMentor]);
 
   const handleOnChange = (e) => {
-    setCodeToShow(e.target.value);
-    socket.emit("changeCode", e.target.value);
-    if (codeToShow === codeBlock.solution) {
+    console.log(codeToShow);
+    console.log(codeBlock.solution);
+    if (!isMentor) {
+      setCodeToShow(e.target.value);
+      socket.emit("changeCode", e.target.value);
+    }
+    if (e.target.value === codeBlock.solution) {
       setCodeToShow(":)");
+      socket.emit("changeCode", ":)");
     }
   };
 

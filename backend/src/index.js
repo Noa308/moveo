@@ -39,6 +39,7 @@ server.listen(3000, async () => {
       activeCodeBlockId: state["activeCodeBlockId"],
     };
     socket.emit("codeBlockInfo", toSend);
+    console.log("send the coode blocks info");
 
     socket.on("enterCodeBlock", (codeBlockId) => {
       console.log(`enter code block: ${codeBlockId} the user: ${userId}`);
@@ -79,6 +80,7 @@ server.listen(3000, async () => {
     socket.on("mentor left the code block", () => {
       console.log(`mentor disconnected, mentor: ${userId}`);
       state = {
+        codeBlocks: state["codeBlocks"],
         userCount: 0,
         activeCodeBlockId: -1,
         solution: "code solution",
