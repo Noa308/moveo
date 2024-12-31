@@ -5,6 +5,8 @@ const CodeBlock = ({ codeBlock, socket }) => {
   const [codeToShow, setCodeToShow] = useState("template of code");
   const [isMentor, setIsMentor] = useState(false);
   const [usersCount, setUsersCount] = useState(0);
+  const [showText, setshowText] = useState(true);
+  //show text is to show the text, otherwise show the emoji
   const goToPath = useGoToPath();
 
   useEffect(() => {
@@ -25,6 +27,10 @@ const CodeBlock = ({ codeBlock, socket }) => {
         setCodeToShow(editedCode);
         //without this only my UI will see the changes and with this all the users will see
       });
+      socket.on("showText", (bool) => {
+        setshowText(bool);
+        //without this only my UI will see the changes and with this all the users will see
+      });
       const reset = () => {
         console.log("restart- second listener");
         goToPath(`/`);
@@ -35,6 +41,7 @@ const CodeBlock = ({ codeBlock, socket }) => {
         socket.off("number of users");
         //socket.off = stop listen to this. it's not socket.disconnect which close this socket
         socket.off("editedCode");
+        socket.off("showText");
         socket.off("restart code block id", reset);
         //when i have more then one listener i need to add the listener to the socket.off.
         // in "socket.off("restart code block id", reset)" the first listener is here(the reset) and the second in "App.jsx"
@@ -53,15 +60,13 @@ const CodeBlock = ({ codeBlock, socket }) => {
   }, [socket, isMentor]);
 
   const handleOnChange = (e) => {
-    console.log(codeToShow);
-    console.log(codeBlock.solution);
     if (!isMentor) {
       setCodeToShow(e.target.value);
       socket.emit("changeCode", e.target.value);
     }
     if (e.target.value === codeBlock.solution) {
-      setCodeToShow("😀");
       socket.emit("changeCode", "😀");
+      socket.emit("changeTextDisplay", false);
     }
   };
 
@@ -83,12 +88,16 @@ const CodeBlock = ({ codeBlock, socket }) => {
 
       {/* textarea is like "input" but this way the text start from the top */}
       {/* i checked and the "code editor" can handle with text that is bigger then w-96 X H-96 */}
-      <textarea
-        type="text"
-        value={codeToShow}
-        className="h-96 w-96 bg-slate-900 text-white p-2 resize-none"
-        onChange={handleOnChange}
-      ></textarea>
+      {!showText ? (
+        <p className="text-9xl my-6">{codeToShow}</p>
+      ) : (
+        <textarea
+          type="text"
+          value={codeToShow}
+          className="h-96 w-96 bg-slate-900 text-white p-2 resize-none"
+          onChange={handleOnChange}
+        ></textarea>
+      )}
       <button
         onClick={handleOnClick}
         className="my-2 border-2 rounded-md border-orange-800 bg-orange-800 text-orange-100 p-2"

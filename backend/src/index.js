@@ -13,14 +13,19 @@ const io = new Server(server, {
   },
 }); // new websocket server
 
-let state = {
-  codeBlocks: [],
+const defaultState = {
   userCount: 0,
   activeCodeBlockId: -1,
   solution: "code solution",
   editedCode: "code template",
+  showText: true,
   activeUsers: new Map(),
   mentorId: -1,
+};
+
+let state = {
+  codeBlocks: [],
+  ...defaultState,
 };
 
 server.listen(3000, async () => {
@@ -68,6 +73,13 @@ server.listen(3000, async () => {
     socket.on("changeCode", (codeToShow) => {
       state["editedCode"] = codeToShow;
       io.emit("editedCode", codeToShow);
+      console.log("edit code");
+    });
+
+    socket.on("changeTextDisplay", (bool) => {
+      state["showText"] = bool;
+      io.emit("showText", bool);
+      console.log("change the show", bool);
     });
     //"on" is when this event happend
     //"emit" send the event (io.emit = send to all connected sockets, socket.emit = send to this socket)
@@ -84,13 +96,8 @@ server.listen(3000, async () => {
     let mentorLeft = () => {
       console.log(`mentor disconnected, mentor: ${userId}`);
       state = {
-        codeBlocks: state["codeBlocks"],
-        userCount: 0,
-        activeCodeBlockId: -1,
-        solution: "code solution",
-        editedCode: "code template",
-        activeUsers: new Map(),
-        mentorId: -1,
+        ...state,
+        ...defaultState,
       };
       io.emit("restart code block id");
     };
