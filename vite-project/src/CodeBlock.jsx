@@ -17,27 +17,29 @@ const CodeBlock = ({ codeBlock, socket }) => {
   }, [socket, codeBlock, codeToShow]);
 
   useEffect(() => {
-    socket.on("number of users", (usersCount) => {
-      setUsersCount(usersCount);
-    });
-    socket.on("editedCode", (editedCode) => {
-      setCodeToShow(editedCode);
-      //without this only my UI will see the changes and with this all the users will see
-    });
-    const reset = () => {
-      console.log("restart- second listener");
-      goToPath(`/`);
-    };
-    socket.on("restart code block id", reset);
-    //cleanup:
-    return () => {
-      socket.off("number of users");
-      //socket.off = stop listen to this. it's not socket.disconnect which close this socket
-      socket.off("editedCode");
-      socket.off("restart code block id", reset);
-      //when i have more then one listener i need to add the listener to the socket.off.
-      // in "socket.off("restart code block id", reset)" the first listener is here(the reset) and the second in "App.jsx"
-    };
+    if (socket) {
+      socket.on("number of users", (usersCount) => {
+        setUsersCount(usersCount);
+      });
+      socket.on("editedCode", (editedCode) => {
+        setCodeToShow(editedCode);
+        //without this only my UI will see the changes and with this all the users will see
+      });
+      const reset = () => {
+        console.log("restart- second listener");
+        goToPath(`/`);
+      };
+      socket.on("restart code block id", reset);
+      //cleanup:
+      return () => {
+        socket.off("number of users");
+        //socket.off = stop listen to this. it's not socket.disconnect which close this socket
+        socket.off("editedCode");
+        socket.off("restart code block id", reset);
+        //when i have more then one listener i need to add the listener to the socket.off.
+        // in "socket.off("restart code block id", reset)" the first listener is here(the reset) and the second in "App.jsx"
+      };
+    }
   }, [socket, goToPath]);
 
   useEffect(() => {
@@ -58,8 +60,8 @@ const CodeBlock = ({ codeBlock, socket }) => {
       socket.emit("changeCode", e.target.value);
     }
     if (e.target.value === codeBlock.solution) {
-      setCodeToShow(":)");
-      socket.emit("changeCode", ":)");
+      setCodeToShow("😀");
+      socket.emit("changeCode", "😀");
     }
   };
 

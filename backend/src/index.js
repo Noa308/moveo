@@ -20,6 +20,7 @@ let state = {
   solution: "code solution",
   editedCode: "code template",
   activeUsers: new Map(),
+  mentorId: -1,
 };
 
 server.listen(3000, async () => {
@@ -59,6 +60,7 @@ server.listen(3000, async () => {
           state["activeUsers"].set(userId, userId);
         }
         socket.emit("this is the mentor");
+        state["mentorId"] = userId;
         console.log(`mentor enter the code block, id: ${userId}`);
       }
     });
@@ -70,14 +72,16 @@ server.listen(3000, async () => {
     //"on" is when this event happend
     //"emit" send the event (io.emit = send to all connected sockets, socket.emit = send to this socket)
 
-    socket.on("user left the code block", () => {
+    let userLeft = () => {
       console.log(`user disconnected, user: ${userId}`);
       state["activeUsers"].delete(userId);
       state["userCount"]--;
       io.emit("number of users", state["userCount"]);
-    });
+    };
 
-    socket.on("mentor left the code block", () => {
+    socket.on("user left the code block", userLeft);
+
+    let mentorLeft = () => {
       console.log(`mentor disconnected, mentor: ${userId}`);
       state = {
         codeBlocks: state["codeBlocks"],
@@ -86,8 +90,17 @@ server.listen(3000, async () => {
         solution: "code solution",
         editedCode: "code template",
         activeUsers: new Map(),
+        mentorId: -1,
       };
       io.emit("restart code block id");
+    };
+    socket.on("mentor left the code block", mentorLeft);
+    socket.on("disconnect", () => {
+      if (userId === state["mentorId"]) {
+        mentorLeft();
+      } else {
+        userLeft();
+      }
     });
   });
 });

@@ -32,6 +32,7 @@ function App() {
     setSocket(socket);
     //cleanup:
     return () => {
+      console.log("socket disconnect");
       socket.disconnect();
     };
   }, []);
