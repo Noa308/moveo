@@ -8,7 +8,7 @@
     "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd ../vite-project && ls -l && npm i && npm run build",
-    "WTF": "echo WTF && cd ../vite-project && ls -l"
+    "WTF": "echo WTF"
   },
   "author": "",
   "license": "ISC",
