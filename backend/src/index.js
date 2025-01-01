@@ -1,4 +1,5 @@
 // https://socket.io/docs/v4/tutorial/introduction
+
 import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
@@ -36,7 +37,7 @@ server.listen(3000, async () => {
 
   //allow connections
   io.on("connection", (socket) => {
-    //"connection" is saved word
+    //"connection" is a saved word
     console.log("new connection");
     const userId = socket.id;
 

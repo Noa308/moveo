@@ -37,7 +37,7 @@ const CodeBlock = ({ codeBlock, socket }) => {
         //without this only my UI will see the changes and with this all the users will see
       });
       const reset = () => {
-        console.log("restart- second listener");
+        //restart- second listener
         goToPath(`/`);
       };
       socket.on("restart code block id", reset);
@@ -80,7 +80,6 @@ const CodeBlock = ({ codeBlock, socket }) => {
       socket.emit("user left the code block");
     }
     goToPath(`/`);
-    // socket.disconnect();
   };
 
   return codeBlock ? (
@@ -89,8 +88,7 @@ const CodeBlock = ({ codeBlock, socket }) => {
       <p>{isMentor ? "Hello Mentor" : "Hello student"}</p>
       <p>number of activated users: {usersCount}</p>
 
-      {/* textarea is like "input" but this way the text start from the top */}
-      {/* i checked and the "code editor" can handle with text that is bigger then w-96 X H-96 */}
+      {/* AceEditor is like "input" but this way the text start from the top */}
       {!showText ? (
         <p className="text-9xl my-6">{codeToShow}</p>
       ) : (
