@@ -17,13 +17,15 @@ console.log(
   })}`
 );
 
-export const client = new Client({
-  user: PG_USER,
-  password: PG_PASSWORD,
-  port: PG_PORT,
-  database: PG_DB,
-  host: PG_HOST,
-});
+// export const client = new Client({
+//   user: PG_USER,
+//   password: PG_PASSWORD,
+//   port: PG_PORT,
+//   database: PG_DB,
+//   host: PG_HOST,
+// });
+
+export const client = null;
 
 export const connect = async () => {
   try {
