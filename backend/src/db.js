@@ -71,6 +71,6 @@ ALTER TABLE IF EXISTS public.code_blocks
         host: PG_HOST,
       })}`
     );
-    console.error("Failed to start DB", err);
+    console.error("Failed to start DB ", err);
   }
 };
