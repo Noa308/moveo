@@ -13,6 +13,10 @@ app.use("/", express.static("src/dist"));
 app.get("/", (req, res) => {
   res.sendFile("src/dist/index.html");
 });
+app.get("*", (req, res) => {
+  console.log("Got here url " + req.url);
+  res.statusCode(404).send();
+});
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
