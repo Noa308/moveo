@@ -7,6 +7,16 @@ const PG_PORT = process.env.PGPORT || 5432;
 const PG_DB = process.env.POSTGRES_DB || "Moveo";
 const PG_HOST = process.env.DATABASE_URL || "localhost";
 
+console.log(
+  `details: ${JSON.stringify({
+    user: PG_USER,
+    password: PG_PASSWORD,
+    port: PG_PORT,
+    database: PG_DB,
+    host: PG_HOST,
+  })}`
+);
+
 export const client = new Client({
   user: PG_USER,
   password: PG_PASSWORD,
