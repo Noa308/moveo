@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import { client, connect } from "./db.js";
 
 const origin = process.env.RAILWAY_PUBLIC_DOMAIN || "*";
+const port = process.env.PORT || 3000;
 
 const app = express();
 app.use("/", express.static("src/dist"));
@@ -14,7 +15,7 @@ app.get("/", (req, res) => {
   res.sendFile("src/dist/index.html");
 });
 app.get("*", (req, res) => {
-  console.log("Got here url " + req.url);
+  console.log("returning 404 to url " + req.url);
   res.statusCode(404).send();
 });
 const server = createServer(app);
@@ -38,9 +39,7 @@ let state = {
   codeBlocks: [],
   ...defaultState,
 };
-const port = process.env.PORT || 3000;
 
-// Listen on `port` and 0.0.0.0
 server.listen(port, "0.0.0.0", async () => {
   console.log("SERVER IS STARTING");
   //init
