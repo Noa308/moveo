@@ -10,7 +10,8 @@ function App() {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const socket = io(`ws://${window.location.origin}`, {
+    console.log(window.location.origin);
+    const socket = io(window.location.origin, {
       reconnectionDelayMax: 10000,
     });
     socket.on("codeBlockInfo", (recivedMesage) => {
