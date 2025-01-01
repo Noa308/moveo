@@ -5,7 +5,7 @@ const PG_USER = process.env.POSTGRES_USER || "postgres";
 const PG_PASSWORD = process.env.POSTGRES_PASSWORD || "postgres";
 const PG_PORT = process.env.PGPORT || 5432;
 const PG_DB = process.env.POSTGRES_DB || "Moveo";
-const PG_HOST = process.env.DATABASE_URL || "localhost";
+const PG_HOST = process.env.PGPORT || "localhost";
 
 console.log(
   `details: ${JSON.stringify({
