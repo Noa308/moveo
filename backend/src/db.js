@@ -6,6 +6,7 @@ const PG_PASSWORD = process.env.POSTGRES_PASSWORD || "postgres";
 const PG_PORT = process.env.PGPORT || 5432;
 const PG_DB = process.env.POSTGRES_DB || "Moveo";
 const PG_HOST = process.env.PGPORT || "localhost";
+const DATABASE_URL = process.env.DATABASE_URL || null;
 
 console.log(
   `details: ${JSON.stringify({
@@ -14,16 +15,19 @@ console.log(
     port: PG_PORT,
     database: PG_DB,
     host: PG_HOST,
+    DATABASE_URL: DATABASE_URL,
   })}`
 );
 
-export const client = new Client({
-  user: PG_USER,
-  password: PG_PASSWORD,
-  port: PG_PORT,
-  database: PG_DB,
-  host: PG_HOST,
-});
+export const client = DATABASE_URL
+  ? new Client({ connectionString: DATABASE_URL })
+  : new Client({
+      user: PG_USER,
+      password: PG_PASSWORD,
+      port: PG_PORT,
+      database: PG_DB,
+      host: PG_HOST,
+    });
 
 export const connect = async () => {
   try {
