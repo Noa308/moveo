@@ -6,9 +6,13 @@ import { Server } from "socket.io";
 
 import { client, connect } from "./db.js";
 
-const origin = process.env.RAILWAY_PUBLIC_DOMAIN || "http://localhost:5173";
+const origin = process.env.RAILWAY_PUBLIC_DOMAIN || "*";
 
 const app = express();
+app.use("/", express.static("src/dist"));
+app.get("/", (req, res) => {
+  res.sendFile("src/dist/index.html");
+});
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
@@ -30,6 +34,7 @@ let state = {
   codeBlocks: [],
   ...defaultState,
 };
+app.listen(3001);
 
 server.listen(3000, async () => {
   //init
