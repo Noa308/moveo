@@ -21,11 +21,15 @@ const LobbyPage = ({ codeBlocks, activeCodeBlockId }) => {
       <div className="flex flex-col text-xl my-4">
         {codeBlocks ? (
           codeBlocks.map((block) => {
-            let className =
-              "my-2 border-2 rounded-md border-orange-800 bg-orange-800 text-orange-100 p-2";
+            let className = "my-2 border-2 rounded-md text-orange-100 p-2";
             if (activeCodeBlockId !== -1) {
-              if (block.id !== activeCodeBlockId)
+              if (block.id !== activeCodeBlockId) {
                 className += " border-gray-300 bg-gray-300";
+              } else {
+                className += " border-orange-800 bg-orange-800";
+              }
+            } else {
+              className += " border-orange-800 bg-orange-800";
             }
             return (
               <button

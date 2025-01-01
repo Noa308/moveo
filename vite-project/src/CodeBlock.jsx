@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import useGoToPath from "./useGoToPath";
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
 
 const CodeBlock = ({ codeBlock, socket }) => {
   const [codeToShow, setCodeToShow] = useState("template of code");
@@ -59,12 +64,10 @@ const CodeBlock = ({ codeBlock, socket }) => {
     };
   }, [socket, isMentor]);
 
-  const handleOnChange = (e) => {
-    if (!isMentor) {
-      setCodeToShow(e.target.value);
-      socket.emit("changeCode", e.target.value);
-    }
-    if (e.target.value === codeBlock.solution) {
+  const handleOnChange = (value) => {
+    setCodeToShow(value);
+    socket.emit("changeCode", value);
+    if (value === codeBlock.solution) {
       socket.emit("changeCode", "😀");
       socket.emit("changeTextDisplay", false);
     }
@@ -91,12 +94,13 @@ const CodeBlock = ({ codeBlock, socket }) => {
       {!showText ? (
         <p className="text-9xl my-6">{codeToShow}</p>
       ) : (
-        <textarea
-          type="text"
+        <AceEditor
+          mode="javascript"
+          theme="github"
           value={codeToShow}
-          className="h-96 w-96 bg-slate-900 text-white p-2 resize-none"
           onChange={handleOnChange}
-        ></textarea>
+          readOnly={isMentor}
+        />
       )}
       <button
         onClick={handleOnClick}
