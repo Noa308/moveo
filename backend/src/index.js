@@ -38,7 +38,7 @@ app.listen(3001);
 
 server.listen(3000, async () => {
   //init
-  await connect();
+  // await connect();
   const { rows } = await client.query(`select * from code_blocks`);
   state["codeBlocks"] = rows;
 
